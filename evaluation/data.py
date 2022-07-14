@@ -12,6 +12,7 @@ def get_index_table(index_code, start_date, end_date):
         df.set_index(['date'], inplace=True)
     df.index.names = ['date']
     df.columns = df.columns.map(lambda x : x.lower())
+    df.rename(columns={'pe_ttm':'pe', 'pb_lf':'pb', 'dividendyield2' : 'dividend'},inplace=True)
     df.dropna(inplace=True)
     if df.empty:
         return df
