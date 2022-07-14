@@ -1,7 +1,11 @@
 import os
+import datetime
+import pandas as pd
 from evaluation.data import get_index_name
+
+__all__ = ['load_local_db', 'save_to_db']
+
 database_path = './database/'
-days_per_year = 250
 
 def load_local_db(index_code):
     file_name = database_path + get_index_name(index_code) + '.csv'
@@ -14,7 +18,7 @@ def load_local_db(index_code):
         return pd.DataFrame()
 
 def save_to_db(index_code, new, old=pd.DataFrame()):
-    file_name = database_path + get_security_info(index_code).display_name + '.csv'
+    file_name = database_path + get_index_name(index_code) + '.csv'
     if len(old) <= 0:
         new.to_csv(file_name)
     else:

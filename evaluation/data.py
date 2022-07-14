@@ -8,6 +8,12 @@ def get_index_table(index_code, start_date, end_date):
     end_str = end_date.strftime("%Y-%m-%d")
     error, df = w.wsd(index_code, "close,pe_ttm,pb_lf,dividendyield2", start_str, end_str, "", usedf=True)
     df.dropna(inplace=True)
+    df.index.names = ['date']
+    df.rename(columns={'CLOSE':'close'},inplace=True)
+    df.rename(columns={'PE_TTM':'pe'},inplace=True)
+    df.rename(columns={'PB_LF':'pb'},inplace=True)
+    df.rename(columns={'DIVIDENDYIELD2':'dividend'},inplace=True)
+
     if df.empty:
         return df
     df = df.round(4)
