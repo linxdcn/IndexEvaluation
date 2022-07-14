@@ -1,7 +1,10 @@
-
+import os
+from evaluation.data import get_index_name
+database_path = './database/'
+days_per_year = 250
 
 def load_local_db(index_code):
-    file_name = database_path + get_security_info(index_code).display_name + '.csv'
+    file_name = database_path + get_index_name(index_code) + '.csv'
     if os.path.exists(file_name):
         df_table = pd.read_csv(file_name)
         df_table['date'] = df_table['date'].apply(lambda x: datetime.datetime.strptime(x, "%Y-%m-%d").date())
