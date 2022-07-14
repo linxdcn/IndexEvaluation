@@ -103,7 +103,7 @@ def update_to_lastest(index_code):
             print(index_code + ' update to ' + df_local.index[i].strftime("%Y-%m-%d"))
     df_local = df_local.round(4)
     save_to_db(index_code, new=df_local)
-    print(index_code + 'all finish')
+    print(index_code + ' all finish')
     return df_local
 
 def calPrecent(df_pe):
