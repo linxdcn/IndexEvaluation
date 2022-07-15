@@ -13,7 +13,7 @@ days_per_year = 250
 def update_to_lastest(index_code):
     start_date = datetime.date(2000, 1, 1)
     end_date = datetime.datetime.now().date()
-    
+
     # 加载基础数据
     df_local = load_local_db(index_code)
     if len(df_local) <= 0:
