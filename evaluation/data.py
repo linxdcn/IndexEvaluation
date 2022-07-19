@@ -1,3 +1,5 @@
+import pandas as pd
+
 from WindPy import *
 w.start()
 
@@ -7,6 +9,8 @@ def get_index_table(index_code, start_date, end_date):
     start_str = start_date.strftime("%Y-%m-%d")
     end_str = end_date.strftime("%Y-%m-%d")
     error, df = w.wsd(index_code, "close,pe_ttm,pb_lf,dividendyield2", start_str, end_str, "", usedf=True)
+    if error != 0:
+        return pd.DataFrame()
     if start_str == end_str:
         df['date'] = [start_date]
         df.set_index(['date'], inplace=True)
@@ -21,5 +25,7 @@ def get_index_table(index_code, start_date, end_date):
 
 def get_index_name(index_code):
     error, df = w.wss(index_code, "SEC_NAME", usedf=True)
+    if error != 0:
+        return index_code
     df.columns = df.columns.map(lambda x : x.lower())
     return df.sec_name[index_code]
