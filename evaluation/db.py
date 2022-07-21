@@ -7,8 +7,8 @@ __all__ = ['load_local_db', 'save_to_db']
 
 database_path = './database/'
 
-def load_local_db(index_code):
-    file_name = database_path + get_index_name(index_code) + '.csv'
+def load_local_db(index_code, period='day'):
+    file_name = database_path + period + "/" + get_index_name(index_code) + '.csv'
     if os.path.exists(file_name):
         df_table = pd.read_csv(file_name)
         df_table['date'] = df_table['date'].apply(lambda x: datetime.datetime.strptime(x, "%Y-%m-%d").date())
@@ -17,8 +17,8 @@ def load_local_db(index_code):
     else:
         return pd.DataFrame()
 
-def save_to_db(index_code, new, old=pd.DataFrame()):
-    file_name = database_path + get_index_name(index_code) + '.csv'
+def save_to_db(index_code, new, old=pd.DataFrame(), period='day'):
+    file_name = database_path + period + "/" + get_index_name(index_code) + '.csv'
     if len(old) <= 0:
         new.to_csv(file_name)
     else:
