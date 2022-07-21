@@ -4,25 +4,30 @@ from enum import Enum
 import datetime
 from dateutil.relativedelta import relativedelta
 import pandas as pd
+from sympy import per
 
 from evaluation.db import load_local_db
 import warnings
 
 warnings.filterwarnings("ignore")
 
-__all__ = ['line_name', 'plot', 'plot_pe_percent', 'plot_pb_percent']
+__all__ = [
+    'line_name', 
+    'plot', 
+    'plot_long_pe_percent', 
+    'plot_short_pe_percent',
+    'plot_long_pb_percent',
+    'plot_short_pb_percent'
+    ]
 
 class line_name(Enum):
+    close = 'close'
     pe  = 'pe'
 
-    pe_5day_mean = 'pe_5day_mean'
-    pe_10day_mean = 'pe_10day_mean'
-    pe_20day_mean = 'pe_20day_mean'
-
-    pe_1year_mean = 'pe_1year_mean'
-    pe_3year_mean = 'pe_3year_mean'
-    pe_5year_mean = 'pe_5year_mean'
-    pe_10year_mean = 'pe_10year_mean'
+    close_5day_mean = 'close_5day_mean'
+    close_10day_mean = 'close_10day_mean'
+    close_20day_mean = 'close_20day_mean'
+    close_1year_mean = 'close_1year_mean'
 
     pe_1year_percent = 'pe_1year_percent'
     pe_3year_percent = 'pe_3year_percent'    
@@ -36,6 +41,7 @@ class line_name(Enum):
     pb_10year_percent = 'pb_10year_percent'
     pb_history_percent = 'pb_history_percent'
 
+# 左y轴为close
 def plot(df_local, line_list,
                     start_date = None, end_date = None, 
                     left_y_min = None, left_y_max = None, 
@@ -80,28 +86,45 @@ def plot(df_local, line_list,
 
     plt.show()
 
-def plot_pe_percent(index_name):
-    df_local = load_local_db(index_name)
+# 左y轴：close
+# 右y轴：各年份pe百分比
+# x轴：2000-至今
+def plot_long_pe_percent(index_name):
+    df_local = load_local_db(index_name, period='month')
 
     plot(df_local, 
-            [line_name.pe_3year_percent, line_name.pe_5year_percent, line_name.pe_10year_percent],
-            start_date=datetime.date(2010, 1, 1), end_date=datetime.datetime.now().date(), 
+            [line_name.pe_3year_percent, line_name.pe_5year_percent, line_name.pe_10year_percent, line_name.pe_history_percent],
+            start_date=datetime.date(2000, 1, 1), end_date=datetime.datetime.now().date(), 
             right_y_min=0.0, right_y_max=1.0, right_y_interval=0.05)
 
+# 左y轴：close
+# 右y轴：各年份pe百分比
+# x轴：近一年
+def plot_short_pe_percent(index_name):
+    df_local = load_local_db(index_name, period='month')
+
     plot(df_local, 
-        [line_name.pe_3year_percent, line_name.pe_5year_percent, line_name.pe_10year_percent],
+        [line_name.pe_3year_percent, line_name.pe_5year_percent, line_name.pe_10year_percent, line_name.pe_history_percent],
         start_date=datetime.datetime.now()-relativedelta(years=1), end_date=datetime.datetime.now().date(), 
         right_y_min=0.0, right_y_max=1.0, right_y_interval=0.05)
 
-def plot_pb_percent(index_name):
-    df_local = load_local_db(index_name)
+# 左y轴：close
+# 右y轴：各年份pb百分比
+# x轴：2000-至今
+def plot_long_pb_percent(index_name):
+    df_local = load_local_db(index_name, period='month')
 
     plot(df_local, 
-            [line_name.pb_3year_percent, line_name.pb_5year_percent, line_name.pb_10year_percent],
+            [line_name.pb_3year_percent, line_name.pb_5year_percent, line_name.pb_10year_percent, line_name.pb_history_percent],
             start_date=datetime.date(2010, 1, 1), end_date=datetime.datetime.now().date(), 
             right_y_min=0.0, right_y_max=1.0, right_y_interval=0.05)
 
+# 左y轴：close
+# 右y轴：各年份pb百分比
+# x轴：近一年
+def plot_short_pb_percent(index_name):
+    df_local = load_local_db(index_name, period='month')
     plot(df_local, 
-        [line_name.pb_3year_percent, line_name.pb_5year_percent, line_name.pb_10year_percent],
+        [line_name.pb_3year_percent, line_name.pb_5year_percent, line_name.pb_10year_percent, line_name.pb_history_percent],
         start_date=datetime.datetime.now()-relativedelta(years=1), end_date=datetime.datetime.now().date(), 
         right_y_min=0.0, right_y_max=1.0, right_y_interval=0.05)

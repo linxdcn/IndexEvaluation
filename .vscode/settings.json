@@ -1,3 +1,4 @@
 {
-    "jupyter.notebookFileRoot": "${workspaceRoot}"
+    "jupyter.notebookFileRoot": "${workspaceRoot}",
+    "python.pythonPath": "D:\\90-software\\Anaconda3\\envs\\localbacktest\\python.exe"
 }
