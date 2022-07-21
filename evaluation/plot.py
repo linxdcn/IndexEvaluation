@@ -1,3 +1,4 @@
+from tkinter.messagebox import NO
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker 
 from enum import Enum
@@ -6,18 +7,23 @@ from dateutil.relativedelta import relativedelta
 import pandas as pd
 from sympy import per
 
-from evaluation.db import load_local_db
+from evaluation.db import *
+from evaluation.constant import *
 import warnings
 
 warnings.filterwarnings("ignore")
 
+plt.rcParams['font.sans-serif'] = ['SimHei']
+plt.rcParams['axes.unicode_minus'] = False
+
 __all__ = [
     'line_name', 
     'plot', 
+    'plot_list',
     'plot_long_pe_percent', 
     'plot_short_pe_percent',
     'plot_long_pb_percent',
-    'plot_short_pb_percent'
+    'plot_short_pb_percent',
     ]
 
 class line_name(Enum):
@@ -62,11 +68,14 @@ def plot(df_local, line_list,
     if left_y_max is not None and left_y_min is not None:
         ax.set_ylim([left_y_min, left_y_max])
 
-    colors = ['xkcd:light blue',
-                'xkcd:pink',
-                'xkcd:turquoise',
-                'xkcd:lavender',
-                'xkcd:peach']
+    colors = [
+        'xkcd:light blue',
+        'xkcd:pink',
+        'xkcd:turquoise',
+        'xkcd:lavender',
+        'xkcd:peach'
+            ]
+
     #绘制另一Y轴    
     ax1=ax.twinx()
     for i in range(len(line_list)):
@@ -83,6 +92,40 @@ def plot(df_local, line_list,
     #合并图例
     labs=[l.get_label() for l in lin0]
     ax.legend(lin0, labs, loc="upper left", fontsize=12)
+
+    plt.show()
+
+def plot_list(indexs, line,
+        y_min = None, y_max = None, 
+        y_interval = None):
+    fig=plt.figure(figsize=(20,8), dpi=300)
+    fig.set_facecolor('white')
+
+    #绘制第一个Y轴
+    ax=fig.add_subplot(111)
+    ax.set_title(line.value, size=12)
+    ax.set_xlabel("date", size=12)
+    ax.set_ylabel(line.value, size=12)
+    ax.grid(axis='x')
+    ax.grid()
+
+    if y_interval is not None:
+        ax.yaxis.set_major_locator(ticker.MultipleLocator(y_interval))
+
+    if y_max is not None and y_min is not None:
+        ax.set_ylim([y_min, y_max])
+
+    lines = None
+    for i in range(len(indexs)):
+        df_local = load_local_db_by_filename(indexs[i], period='month')
+        l = ax.plot(df_local.index, df_local[line.value], color='C' + str(i % 10), label=line.value)
+        if lines is None:
+            lines = l
+        else:
+            lines = lines + l
+
+    #合并图例
+    ax.legend(lines, indexs, loc="upper left", fontsize=12)
 
     plt.show()
 

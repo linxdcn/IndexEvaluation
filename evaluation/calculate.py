@@ -36,7 +36,7 @@ def update_to_lastest(index_code, period='day'):
 
 def local_recalculate(index_code, period='day'):
     df_local = load_local_db(index_code, period)
-    df_local.drop(df_local.columns[4:-1], axis=1, inplace=True)
+    df_local.drop(df_local.columns[4:], axis=1, inplace=True)
     if period == 'day':
         return doCalDay(index_code, df_local)
     if period == 'month':

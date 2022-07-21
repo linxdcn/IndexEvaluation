@@ -1,8 +1,5 @@
 import pandas as pd
 
-from WindPy import *
-w.start()
-
 __all__ = ['get_index_table', 'get_index_name']
 
 wind_init = False
