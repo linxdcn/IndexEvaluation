@@ -1,6 +1,11 @@
 import pandas as pd
+import datetime as dt
 
-__all__ = ['get_index_table', 'get_index_name']
+__all__ = [
+    'get_index_table', 
+    'get_index_name',
+    'get_index_nav'
+    ]
 
 wind_init = False
 wind_datasource = any
@@ -34,6 +39,16 @@ def get_index_name(index_code):
         return index_code
     df.columns = df.columns.map(lambda x : x.lower())
     return df.sec_name[index_code]
+
+def get_index_nav(indexs_code):
+    init_wind()
+    indexs_str = ','.join(str(i) for i in indexs_code)
+    start_str = dt.datetime.now().date().strftime("%Y%m%d")
+    date_str = 'tradeDate={};'.format(start_str)
+    error, df = wind_datasource.wss(indexs_str,  'nav',  date_str, usedf=True);
+    if error != 0:
+        return pd.DataFrame()
+    return df
 
 def init_wind():
     global wind_init
