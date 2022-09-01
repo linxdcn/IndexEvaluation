@@ -58,8 +58,9 @@ def __get_from_wind(security, start_date, end_date):
         error, result = wind_datasource.wsd(security, 'open,close,pre_close', start_date, end_date, "PriceAdj=F", usedf=True)
         if error != 0:
             return pd.DataFrame()
+        if len(result) == 1:
+            return pd.DataFrame()
         result.columns = [s.lower() for s in result.columns]
-        result.dropna(inplace=True)
         result['security'] = security[0]
         result['datetime'] = result.index
         result.set_index(['security', 'datetime'], inplace=True)

@@ -40,7 +40,7 @@ def save_to_db(index_code, new, old=pd.DataFrame(), period='day'):
         df = old.append(new)
         df.to_csv(file_name)
 
-def load_position(cash):
+def load_position(cash, security):
     file_name = database_path + "position/trade.csv"
 
     def cal_position(df, df_nav):
@@ -64,6 +64,8 @@ def load_position(cash):
         df.columns = ['L1', 'L2', 'L3', 'position']
         df.sort_values(by=['L1', 'L2', 'L3'], ascending=[True, True, True], inplace=True)
         df.loc[len(df)]=[ '现金', '现金', '现金', cash ]
+        if (security > 0):
+            df.loc[len(df)]=[ '股票', '股票', '股票', security ]
         return df
     else:
         return pd.DataFrame()

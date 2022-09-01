@@ -182,14 +182,14 @@ class LocalBacktest():
             trade.amount = trade.price * trade.volume
 
             position = position_dict.get(security, Position(security, 0.0, 0.0, 0))
-            increase_profit = (row_data.loc[price] - position.last_price) * position.volume
+            orginal_amount = position.amount
             position.volume += volume
-            position.amount += increase_profit + row_data.loc[price] * volume
             position.last_price = row_data.loc[price]
+            position.amount = position.volume * position.last_price
             position_dict[security] = position
 
             capital.available_fund -= buy_capital
-            capital.holding_value += row_data.loc[price] * volume + increase_profit
+            capital.holding_value = capital.holding_value - orginal_amount + position.amount
             capital.total_asset = capital.available_fund + capital.holding_value
 
         #卖出方向
@@ -205,21 +205,30 @@ class LocalBacktest():
             trade.price = row_data.loc[price]
             trade.amount = trade.price * trade.volume
 
+            orginal_amount = position.amount
             position.volume -= volume
-            increase_profit = (row_data.loc[price] - position.last_price) * position.volume
-            position.amount += -row_data.loc[price] * volume + increase_profit
             position.last_price = row_data.loc[price]
+            position.amount = position.volume * position.last_price
             position_dict[security] = position
 
             capital.available_fund += sell_capital
-            capital.holding_value -= row_data.loc[price] * volume
+            capital.holding_value = capital.holding_value - orginal_amount + position.amount
             capital.total_asset = capital.available_fund + capital.holding_value
         
         self.__trade_list.append(trade)
         return True
 
+    def getPosition(self, security):
+        if security in self.__position_dict:
+            return self.__position_dict[security].volume
+        else:
+            return 0
+
+
     def summary_result(self):
+        years = len(self.__nav['benchmark']) / 250
         dict = {
+                    "year_returns": pow(self.__nav['nav'].iloc[-1], 1.0 / years),
                     "returns": self.__nav['nav'].iloc[-1] - 1,
                     "available_fund": self.__capital.available_fund,
                     "holding_value": self.__capital.holding_value

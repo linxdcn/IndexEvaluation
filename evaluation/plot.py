@@ -215,8 +215,8 @@ def plot_short_pb_percent(index_name):
         start_date=datetime.datetime.now()-relativedelta(years=1), end_date=datetime.datetime.now().date(), 
         right_y_min=0.0, right_y_max=1.0, right_y_interval=0.05)
 
-def plot_position(cash):
-    df = load_position(cash)
+def plot_position(cash, security):
+    df = load_position(cash, security)
     size = 0.3
     
     colors_list = [
